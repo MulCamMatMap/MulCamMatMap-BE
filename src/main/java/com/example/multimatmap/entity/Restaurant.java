@@ -30,4 +30,16 @@ public class Restaurant {
     private double longitude;
 
     private String slackTs;
+
+    // Restaurant update 용 코드
+    public void updateFrom(Restaurant other) {
+        this.name = other.getName();
+        this.category = other.getCategory();
+        this.address = other.getAddress();
+        this.link = other.getLink();
+        this.note = other.getNote();
+        this.latitude = other.getLatitude();
+        this.longitude = other.getLongitude();
+        this.slackTs = other.getSlackTs();
+    }
 }
