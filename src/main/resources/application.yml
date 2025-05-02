@@ -2,7 +2,10 @@ spring:
   config:
     import: optional:classpath:application-API-KEY.properties
   datasource:
-    url: jdbc:mysql://${DB_URL}
+#    url: jdbc:mysql://${DB_URL}
+#    username: ${DB_USERNAME}
+#    password: ${DB_PASSWORD}
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
@@ -12,7 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
 
   servlet:
     encoding:
