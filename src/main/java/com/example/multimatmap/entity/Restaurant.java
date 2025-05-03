@@ -35,4 +35,12 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
+
+    public void updateRestaurantDetails(Restaurant restaurant) {
+        this.name = restaurant.getName();
+        this.address = restaurant.getAddress();
+        this.note = restaurant.getNote();
+        this.latitude = restaurant.getLatitude();
+        this.longitude = restaurant.getLongitude();
+    }
 }

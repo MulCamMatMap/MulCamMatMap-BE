@@ -58,4 +58,13 @@ public class RestaurantController {
         restaurantService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/admin/restaurants/{id}")
+    public ResponseEntity<RestaurantDTO> updateRestaurant(
+            @PathVariable Long id,
+            @RequestParam RestaurantDTO restaurantDTO
+    ) {
+        Restaurant updatedRestaurant = restaurantService.updateById(id, restaurantDTO.toEntity());
+        return ResponseEntity.ok(new RestaurantDTO(updatedRestaurant));
+    }
 }

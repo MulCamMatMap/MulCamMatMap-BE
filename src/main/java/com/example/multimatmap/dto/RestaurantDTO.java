@@ -32,4 +32,14 @@ public class RestaurantDTO {
                 .collect(Collectors.toList());
     }
 
+    public Restaurant toEntity() {
+        return Restaurant.builder()
+                .name(this.name)
+                .address(this.address)
+                .link(this.link)
+                .note(this.note)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
+                .build();
+    }
 }

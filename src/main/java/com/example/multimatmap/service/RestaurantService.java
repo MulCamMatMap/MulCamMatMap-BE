@@ -6,6 +6,7 @@ import com.example.multimatmap.entity.CategoryRestaurant;
 import com.example.multimatmap.entity.Restaurant;
 import com.example.multimatmap.repository.CategoryRepository;
 import com.example.multimatmap.repository.RestaurantRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -118,5 +119,20 @@ public class RestaurantService {
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
         restaurantRepository.delete(restaurant);
+    }
+
+    /**
+     * 식당 id를 이용하여 식당 정보 update, 존재하지 않을 경우 예외 발생
+     * @param id
+     * @param restaurant
+     * @return
+     */
+    @Transactional
+    public Restaurant updateById(Long id, Restaurant restaurant) {
+        Restaurant existingRestaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+
+        existingRestaurant.updateRestaurantDetails(restaurant);
+        return restaurantRepository.save(existingRestaurant);
     }
 }
