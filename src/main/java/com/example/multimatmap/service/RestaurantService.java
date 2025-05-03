@@ -1,5 +1,6 @@
 package com.example.multimatmap.service;
 
+import com.example.multimatmap.dto.RestaurantDTO;
 import com.example.multimatmap.entity.Category;
 import com.example.multimatmap.entity.CategoryRestaurant;
 import com.example.multimatmap.entity.Restaurant;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,19 +48,25 @@ public class RestaurantService {
         }
     }
 
-    public List<Restaurant> findAll() {
-        return restaurantRepository.findAll();
+    public List<RestaurantDTO> findAll() {
+        return restaurantRepository.findAll().stream()
+                .map(RestaurantDTO::new)
+                .collect(Collectors.toList());
     }
 
     public boolean existsByNameAndAddress(String name, String address) {
         return restaurantRepository.existsByNameAndAddress(name, address);
     }
 
-    public List<Restaurant> findInBounds(double minLat, double maxLat, double minLng, double maxLng) {
-        return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng);
+    public List<RestaurantDTO> findInBounds(double minLat, double maxLat, double minLng, double maxLng) {
+        return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng).stream()
+                .map(RestaurantDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public List<Restaurant> findWithinBounds(double minLat, double maxLat, double minLng, double maxLng) {
-        return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng);
+    public List<RestaurantDTO> findWithinBounds(double minLat, double maxLat, double minLng, double maxLng) {
+        return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng).stream()
+                .map(RestaurantDTO::new)
+                .collect(Collectors.toList());
     }
 }

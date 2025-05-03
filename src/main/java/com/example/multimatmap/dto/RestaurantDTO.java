@@ -1,10 +1,14 @@
 package com.example.multimatmap.dto;
 
 import com.example.multimatmap.entity.Restaurant;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class RestaurantDTO {
     private Long id;
     private String name;
