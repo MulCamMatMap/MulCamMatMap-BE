@@ -109,4 +109,14 @@ public class RestaurantService {
                 .map(RestaurantDTO::new)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 식당 ID로 삭제, 존재하지 않을 경우 예외 발생
+     * @param id
+     */
+    public void deleteById(Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        restaurantRepository.delete(restaurant);
+    }
 }
