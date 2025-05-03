@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Map;
@@ -34,7 +36,8 @@ public class SlackEventController {
             String text = (String) event.get("text");
 
             if (text != null && text.contains(":pushpin:")) {
-                Restaurant restaurant = parseMessage(text);
+                List<String> parsedCategories = new ArrayList<>();
+                Restaurant restaurant = parseMessage(text, parsedCategories);
                 if (restaurant != null) {
                     try {
                         var coord = geocodingService.getCoordinates(restaurant.getAddress());
@@ -43,6 +46,7 @@ public class SlackEventController {
                             restaurant.setLongitude(coord.getLongitude());
                         }
                         restaurantService.save(restaurant);
+                        restaurantService.saveCategories(restaurant, parsedCategories);
                         log.info("✅ 식당 저장 성공: {}", restaurant.getName());
                     } catch (Exception e) {
                         log.error("❌ 저장 실패: {}", e.getMessage(), e);
@@ -53,7 +57,7 @@ public class SlackEventController {
         return Map.of("status", "ok");
     }
 
-    private Restaurant parseMessage(String text) {
+    private Restaurant parseMessage(String text, List<String> outCategories) {
         Pattern namePattern = Pattern.compile("식당명[:：]\\s*(.*)");
         Pattern typePattern = Pattern.compile("1[).．]\\s*분류[:：]\\s*(.*)");
         Pattern locationPattern = Pattern.compile("2[).．]\\s*위치[:：]\\s*(.*)");
@@ -66,14 +70,31 @@ public class SlackEventController {
         Matcher link = linkPattern.matcher(text);
         Matcher note = notePattern.matcher(text);
 
+        String categoryRaw = "";
+        if (type.find()) {
+            categoryRaw = type.group(1).trim();
+            outCategories.addAll(parseCategoryNames(categoryRaw));
+        }
+
         return Restaurant.builder()
                 .name(name.find() ? name.group(1).trim() : "")
-                .category(type.find() ? type.group(1).trim() : "")
+//                .category(type.find() ? type.group(1).trim() : "")
                 .address(location.find() ? location.group(1).trim() : "")
                 .link(link.find() ? link.group(1).trim() : "")
                 .note(note.find() ? note.group(1).trim() : "")
                 .latitude(0.0)
                 .longitude(0.0)
                 .build();
+    }
+
+    private List<String> parseCategoryNames(String categoryString) {
+        List<String> result = new ArrayList<>();
+        if (categoryString != null && !categoryString.trim().isEmpty()) {
+            String[] names = categoryString.split(",");
+            for (String name : names) {
+                result.add(name.trim());
+            }
+        }
+        return result;
     }
 }

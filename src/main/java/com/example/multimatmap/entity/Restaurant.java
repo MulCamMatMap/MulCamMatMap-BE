@@ -3,6 +3,9 @@ package com.example.multimatmap.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -16,7 +19,6 @@ public class Restaurant {
     private Long id;
 
     private String name;     // 식당명
-    private String category; // 분류
     private String address;  // 위치
     private String link;     // 링크
 
@@ -30,4 +32,7 @@ public class Restaurant {
     private double longitude;
 
     private String slackTs;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
 }

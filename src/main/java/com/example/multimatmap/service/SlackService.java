@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +21,8 @@ public class SlackService {
 
     private final RestaurantRepository restaurantRepository;
     private final GeocodingService geocodingService; // 좌표 변환
+    private final RestaurantService restaurantService;
+    private List<String> parsedCategories = new ArrayList<>();
 
     @Value("${slack.token}")
     private String token;
@@ -59,6 +62,7 @@ public class SlackService {
             if (restaurant != null) {
                 restaurant.setSlackTs(message.getTs()); // ts 저장
                 restaurantRepository.save(restaurant);
+                restaurantService.saveCategories(restaurant, parsedCategories);
                 savedCount++;
             }
         }
@@ -92,9 +96,12 @@ public class SlackService {
             return null;
         }
 
+        String categoryRaw = type.find() ? type.group(1).trim() : "";
+        parsedCategories = parseCategoryNames(categoryRaw);
+
         return Restaurant.builder()
                 .name(name.group(1).trim())
-                .category(type.find() ? type.group(1).trim() : "")
+//                .category(type.find() ? type.group(1).trim() : "")
                 .address(cleanAddress)
                 .link(link.find() ? link.group(1).trim() : "")
                 .note(note.find() ? note.group(1).trim() : "")
@@ -123,5 +130,16 @@ public class SlackService {
         public String getTs() {
             return ts;
         }
+    }
+
+    private List<String> parseCategoryNames(String categoryString) {
+        List<String> result = new ArrayList<>();
+        if (categoryString != null && !categoryString.trim().isEmpty()) {
+            String[] names = categoryString.split(",");
+            for (String name : names) {
+                result.add(name.trim());
+            }
+        }
+        return result;
     }
 }

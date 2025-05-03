@@ -1,5 +1,6 @@
 package com.example.multimatmap.controller;
 
+import com.example.multimatmap.dto.RestaurantDTO;
 import com.example.multimatmap.entity.Restaurant;
 import com.example.multimatmap.service.RestaurantService;
 import com.example.multimatmap.service.SlackService;
@@ -22,12 +23,12 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<Restaurant> getAllRestaurants() {
+    public List<RestaurantDTO> getAllRestaurants() {
         return restaurantService.findAll();
     }
 
     @GetMapping("/restaurants/in-bounds")
-    public List<Restaurant> getRestaurantsInBounds(
+    public List<RestaurantDTO> getRestaurantsInBounds(
             @RequestParam double minLat,
             @RequestParam double maxLat,
             @RequestParam double minLng,
@@ -36,7 +37,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/within")
-    public List<Restaurant> getRestaurantsWithin(
+    public List<RestaurantDTO> getRestaurantsWithin(
             @RequestParam double minLat,
             @RequestParam double maxLat,
             @RequestParam double minLng,
