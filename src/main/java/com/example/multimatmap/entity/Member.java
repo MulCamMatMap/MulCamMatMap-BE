@@ -24,5 +24,8 @@ public class Member {
 
     @Column(nullable = false, unique = true)
     private String password;
+    
+    @Column
+    private String role; //관리자/일반 사용자 권한설정
 
 }
