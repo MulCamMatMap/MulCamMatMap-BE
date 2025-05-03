@@ -1,12 +1,19 @@
 package com.example.multimatmap.config;
 
 import com.example.multimatmap.dto.Coordinate;
+import com.example.multimatmap.entity.Category;
+import com.example.multimatmap.entity.CategoryRestaurant;
 import com.example.multimatmap.entity.Restaurant;
+import com.example.multimatmap.repository.CategoryRepository;
+import com.example.multimatmap.repository.RestaurantRepository;
 import com.example.multimatmap.service.GeocodingService;
 import com.example.multimatmap.service.RestaurantService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -14,6 +21,8 @@ public class DataLoader {
 
     private final RestaurantService restaurantService;
     private final GeocodingService geocodingService;
+    private final CategoryRepository categoryRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @PostConstruct
     public void init() {
@@ -23,7 +32,7 @@ public class DataLoader {
         saveUnique("스위트앤카츠", "일식", "서울 광진구 광나루로17길 14", "https://naver.me/xWTnbo9S", "돈까스무한리필뷔페👍");
         saveUnique("고을칼국수", "분식", "서울 광진구 광나루로17길 14-5", "https://naver.me/GiphLR1d", "면부터 직접 뽑는 곳");
         saveUnique("마가을고기", "한식", "서울 광진구 광나루로 381-1", "https://naver.me/FK5QmIPC", "가성비 좋은 한식 뷔페(점심시간에만 뷔페운영)");
-        saveUnique("세종대학교 푸드코트(학식)", "한식,분식 등등", "서울 광진구 능동로 209", "https://naver.me/IGJIHvI5", "가성비 최고, 학식만 먹으러 오기도 하는 유명한 학식👍");
+        saveUnique("세종대학교 푸드코트(학식)", "한식,분식", "서울 광진구 능동로 209", "https://naver.me/IGJIHvI5", "가성비 최고, 학식만 먹으러 오기도 하는 유명한 학식👍");
         saveUnique("건대우동집 어린이대공원점", "분식", "서울 광진구 광나루로 386 하이뷰오피스텔 102호", "https://naver.me/FxFHRwVI", "자리는 좁지만, 회전이 빨라요!");
         saveUnique("은혜즉석떡볶이", "분식", "서울 광진구 광나루로 381-1", "https://naver.me/xxY28m4Z", "짜장 즉석떡볶이🍽️");
         saveUnique("철순이네 김치찌개", "한식", "서울 광진구 광나루로 361 동양파라곤 101동 1층 철순이네김치찌개", "https://naver.me/5MVOTsH5", "김치돼지볶음도 맛👍");
@@ -31,7 +40,7 @@ public class DataLoader {
         saveUnique("신사골감자탕 어린이대공원점", "한식", "서울 광진구 광나루로 380 1층", "https://naver.me/IDFUnjUk", "넓은 자리, 가격 저렴, 푸짐한 양");
         saveUnique("미식반점 군자본점", "중식", "서울 광진구 군자로 70 1층", "https://naver.me/xX7OPRbq", null);
         saveUnique("계절밥상 세종대학교점", "한식", "서울 광진구 능동로 209 군자관 6층", "https://naver.me/xmxAGO3d", "넓은 자리, 가격 저렴");
-        saveUnique("멀캠 반점", "한식, 중식, 일식, 양식 등", "서울 광진구 능동로 195-16 5층", "https://naver.me/xX7OPRbq", null);
+        saveUnique("멀캠 반점", "한식,중식,일식,양식", "서울 광진구 능동로 195-16 5층", "https://naver.me/xX7OPRbq", null);
     }
 
     private void saveUnique(String name, String category, String address, String link, String note) {
@@ -41,17 +50,19 @@ public class DataLoader {
                 Coordinate coord = geocodingService.getCoordinates(address);
                 if (coord != null) {
                     System.out.println("📍 변환된 좌표: " + coord.getLatitude() + ", " + coord.getLongitude());
-                    restaurantService.save(Restaurant.builder()
+                    Restaurant restaurant = Restaurant.builder()
                             .id(null)
                             .name(name)
-                            .category(category)
                             .address(address)
                             .link(link)
                             .note(note)
                             .latitude(coord.getLatitude())
                             .longitude(coord.getLongitude())
-                            .build()
-                    );
+                            .build();
+                    restaurantService.save(restaurant);
+
+                    List<String> categoryNames =parseCategoryNames(category) ;
+                    restaurantService.saveCategories(restaurant, categoryNames);
                 } else {
                     System.err.println("❗ 좌표를 찾을 수 없습니다: " + address);
                 }
@@ -60,5 +71,17 @@ public class DataLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    //카테고리 여러개인 경우 저장
+    private List<String> parseCategoryNames(String categoryString) {
+        List<String> result = new ArrayList<>();
+        if (categoryString != null && !categoryString.trim().isEmpty()) {
+            String[] names = categoryString.split(",");
+            for (String name : names) {
+                result.add(name.trim());
+            }
+        }
+        return result;
     }
 }

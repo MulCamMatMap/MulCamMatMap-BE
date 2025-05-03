@@ -1,10 +1,14 @@
 package com.example.multimatmap.service;
 
+import com.example.multimatmap.entity.Category;
+import com.example.multimatmap.entity.CategoryRestaurant;
 import com.example.multimatmap.entity.Restaurant;
+import com.example.multimatmap.repository.CategoryRepository;
 import com.example.multimatmap.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -12,9 +16,28 @@ import java.util.List;
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final CategoryRepository categoryRepository;
 
     public Restaurant save(Restaurant restaurant) {
         return restaurantRepository.save(restaurant);
+    }
+
+    //카테고리 매핑 테이블 까지 만들어서 저장하는 로직
+    public void saveCategories(Restaurant restaurant, List<String> categoryNames) {
+        List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
+
+        for (String name : categoryNames) {
+            Category category = categoryRepository.findByName(name)
+                    .orElseGet(() -> categoryRepository.save(new Category(name)));
+
+            CategoryRestaurant cr = CategoryRestaurant.builder()
+                    .restaurant(restaurant)
+                    .category(category)
+                    .build();
+            categoryRestaurants.add(cr);
+        }
+        restaurant.setCategoryRestaurants(categoryRestaurants);
+        restaurantRepository.save(restaurant);
     }
 
     public void saveUnique(Restaurant restaurant) {
