@@ -36,6 +36,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
+    //이때 email 을 넣었으므로 .getName()메서드에서 subject 인 email이 추출됨.
     public String createToken(String email, String role) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
