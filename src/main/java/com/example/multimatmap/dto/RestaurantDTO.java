@@ -19,6 +19,10 @@ public class RestaurantDTO {
     private double longitude;
     private List<String> categories; // 식당에 해당하는 카테고리 정보
 
+    public RestaurantDTO() {
+        // Jackson 직렬화 및 테스트 코드에서 사용하기 위해 필요
+    }
+
     public RestaurantDTO(Restaurant restaurant) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();

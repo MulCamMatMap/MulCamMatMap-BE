@@ -53,16 +53,16 @@ public class RestaurantController {
         return "슬랙 데이터 가져오기 완료";
     }
 
-    @DeleteMapping("/admin/restaurants/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
         restaurantService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/admin/restaurants/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<RestaurantDTO> updateRestaurant(
             @PathVariable Long id,
-            @RequestParam RestaurantDTO restaurantDTO
+            @RequestBody RestaurantDTO restaurantDTO // @RequestBody로 수정
     ) {
         Restaurant updatedRestaurant = restaurantService.updateById(id, restaurantDTO.toEntity());
         return ResponseEntity.ok(new RestaurantDTO(updatedRestaurant));
