@@ -31,3 +31,7 @@ naver:
 slack:
   token: ${SLACK_TOKEN}
   channel-id: ${SLACK_CHANNEL_ID}
+
+jwt:
+  secret: ${JWT_CODE}
+  expiration: 3600000 #1시간 지속으로 설정했습니다.
