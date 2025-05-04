@@ -5,6 +5,7 @@ import com.example.multimatmap.entity.Restaurant;
 import com.example.multimatmap.service.RestaurantService;
 import com.example.multimatmap.service.SlackService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +51,20 @@ public class RestaurantController {
     public String fetchFromSlack() {
         slackService.fetchAndSaveMessages();
         return "슬랙 데이터 가져오기 완료";
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable Long id) {
+        restaurantService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<RestaurantDTO> updateRestaurant(
+            @PathVariable Long id,
+            @RequestBody RestaurantDTO restaurantDTO // @RequestBody로 수정
+    ) {
+        Restaurant updatedRestaurant = restaurantService.updateById(id, restaurantDTO.toEntity());
+        return ResponseEntity.ok(new RestaurantDTO(updatedRestaurant));
     }
 }

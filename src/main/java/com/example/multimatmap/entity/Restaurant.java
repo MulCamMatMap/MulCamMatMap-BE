@@ -34,5 +34,15 @@ public class Restaurant {
     private String slackTs;
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
+
+    public void updateRestaurantDetails(Restaurant restaurant) {
+        this.name = restaurant.getName();
+        this.address = restaurant.getAddress();
+        this.link = restaurant.getLink();
+        this.note = restaurant.getNote();
+        this.latitude = restaurant.getLatitude();
+        this.longitude = restaurant.getLongitude();
+    }
 }

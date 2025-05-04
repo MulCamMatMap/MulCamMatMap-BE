@@ -19,6 +19,10 @@ public class RestaurantDTO {
     private double longitude;
     private List<String> categories; // 식당에 해당하는 카테고리 정보
 
+    public RestaurantDTO() {
+        // Jackson 직렬화 및 테스트 코드에서 사용하기 위해 필요
+    }
+
     public RestaurantDTO(Restaurant restaurant) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
@@ -32,4 +36,14 @@ public class RestaurantDTO {
                 .collect(Collectors.toList());
     }
 
+    public Restaurant toEntity() {
+        return Restaurant.builder()
+                .name(this.name)
+                .address(this.address)
+                .link(this.link)
+                .note(this.note)
+                .latitude(this.latitude)
+                .longitude(this.longitude)
+                .build();
+    }
 }
