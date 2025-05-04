@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,7 +37,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid MemberLoginDTO loginrequest){
         String refreshToken = jwtTokenProvider.createRefreshToken();
-        String token=memberService.login(loginrequest);
+        String accessToken = memberService.login(loginrequest);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
@@ -44,9 +45,11 @@ public class AuthController {
                 .maxAge(Duration.ofDays(7)) // 리프레시 토큰 유효기간 (7일)
                 .build();
 
+        Map<String, String> responseBody = Map.of("accessToken", accessToken);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(token);
+                .body(responseBody.toString());
     }
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {

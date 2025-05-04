@@ -28,6 +28,7 @@ public class MemberService {
                 .email(String.valueOf(memberSignDTO.getEmail()))
                 .password(passwordEncoder.encode(memberSignDTO.getPassword()))
                 .username(memberSignDTO.getName())
+                .role("USER")
                 .build();
 
         return memberRepository.save(member);

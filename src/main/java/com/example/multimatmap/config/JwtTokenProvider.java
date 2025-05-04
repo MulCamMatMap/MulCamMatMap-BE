@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 //토큰 생성용 클래스입니다. 지피티랑 친구먹었음;;
 @Component
@@ -55,6 +57,7 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds * 2); // 리프레시 토큰은 더 긴 유효 기간
 
+        Claims claims = Jwts.claims().setSubject("refresh-token");
         return Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(validity)
@@ -64,10 +67,13 @@ public class JwtTokenProvider {
 
     // 토큰에서 이메일 추출
     public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
+        String email = Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+        //디버깅 용
+        System.out.println("Extracted email: " + email);
+        return email;
     }
 
     public String getUserName(String token) {
@@ -87,9 +93,24 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    /**
+     * 권한 관련 문제로 수정. 추후 관리자 권한 시 참고할 것
+     * @param token
+     * @return
+     */
     public Authentication getAuthentication(String token) {
         String userEmail = getEmail(token);
-        return new UsernamePasswordAuthenticationToken(userEmail, token, null); // 권한은 null
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token)
+                .getBody();
+        String role = (String) claims.get("role");
+
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if (role != null) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        }
+        return new UsernamePasswordAuthenticationToken(userEmail, token, authorities);
     }
 
     // Request에서 토큰 추출
