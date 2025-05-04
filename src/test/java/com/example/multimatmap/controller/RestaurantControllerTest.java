@@ -11,7 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,6 +71,28 @@ class RestaurantControllerTest {
                 .andExpect(jsonPath("$.note", is("Updated Note")))
                 .andExpect(jsonPath("$.latitude", is(38.0)))
                 .andExpect(jsonPath("$.longitude", is(128.0)));
+    }
+
+    @Test
+    void deleteRestaurantTest() throws Exception {
+        // 초기 데이터 설정: 테스트용 식당을 저장
+        Restaurant restaurant = Restaurant.builder()
+                .name("Test Restaurant")
+                .address("Test Address")
+                .link("http://test-link.com")
+                .note("Test Note")
+                .latitude(37.0)
+                .longitude(127.0)
+                .build();
+        restaurant = restaurantRepository.save(restaurant);
+
+        // 삭제 요청을 보내고 결과 검증
+        mockMvc.perform(delete("/restaurants/admin/" + restaurant.getId()))
+                .andExpect(status().isNoContent());
+
+        // 삭제 후 데이터베이스에서 해당 식당이 존재하지 않는지 확인
+        boolean restaurantExists = restaurantRepository.existsById(restaurant.getId());
+        assertThat(restaurantExists).isFalse();
     }
 
 }
