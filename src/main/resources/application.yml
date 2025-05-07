@@ -1,16 +1,16 @@
 spring:
-#  config:
-#    import: optional:classpath:application-API-KEY.properties
+  config:
+    import: optional:classpath:application-API-KEY.properties
   springdoc:
     swagger-ui:
       path: /swagger-ui.html
   datasource:
-#    url: jdbc:mysql://${DB_URL}
-#    username: ${DB_USERNAME}
-#    password: ${DB_PASSWORD}
-    url: jdbc:mysql://localhost:3306/restaurant_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
-    username: minseok
-    password: 1919
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+#    url: jdbc:mysql://localhost:3306/restaurant_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
+#    username: minseok
+#    password: 1919
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,7 +18,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.H2Dialect
 
   servlet:
     encoding:
@@ -35,3 +35,7 @@ slack:
 jwt:
   secret: zW5T!x3#D4v8*F9u$Y7sK2@1L9gJm4Qa
   expiration: 3600000 #1시간 지속으로 설정했습니다.
+
+admin:
+  password: ${ADMIN_PASSWORD}
+
