@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**","/slack").permitAll()
                 .requestMatchers("/restaurants/**").permitAll()
                 .requestMatchers("/comment/restaurants/**").permitAll()
+                .requestMatchers("/review/restaurants/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), BasicAuthenticationFilter.class)

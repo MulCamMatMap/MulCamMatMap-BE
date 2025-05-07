@@ -22,7 +22,6 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 @Builder
 public class ReviewRequestDTO {
-    private Long id;
     private String content;
     private Integer score;
     private Long restaurantId;

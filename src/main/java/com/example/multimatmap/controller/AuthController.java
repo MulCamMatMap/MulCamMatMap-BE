@@ -54,7 +54,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         // HTTPOnly 쿠키에서 리프레시 토큰을 가져옴
-        String refreshToken = jwtTokenProvider.resolveToken(request);
+        String refreshToken = jwtTokenProvider.refreshToken(request);
 
         // 리프레시 토큰이 유효한지 검사
         if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {

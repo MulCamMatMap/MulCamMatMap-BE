@@ -38,7 +38,7 @@ public class ReviewService {
         //오 이걸루 JWTtokenProvider 사용가능. -> 사용자의 정보를 얻을 수 있다.
         Member member= memberRepository.findByEmail(email)
                 .orElseThrow(()-> new IllegalArgumentException("해당 멤버를 찾을 수 없습니다."));
-        Restaurant restaurant= restaurantRepository.findById(reviewRequestDTO.getId())
+        Restaurant restaurant= restaurantRepository.findById(reviewRequestDTO.getRestaurantId())
                 .orElseThrow(()-> new IllegalArgumentException("해당 식당을 찾을 수 없습니다."));
         Review review= Review.builder()
                 .content(reviewRequestDTO.getContent())
@@ -65,11 +65,12 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public List<ReviewResponseDTO> getReviews(Long restaurantId) {
-        return reviewRepository.findByRestaurantId(restaurantId).stream()
+        return reviewRepository.findAllByRestaurantId(restaurantId).stream()
                 .map(review -> ReviewResponseDTO.builder()
                         .id(review.getId())
                         .content(review.getContent())
                         .memberName(review.getMember().getUsername())
+                        .score(review.getScore())
                         .restaurantId(review.getRestaurant().getId())
                         .build())
                 .collect(Collectors.toList());
