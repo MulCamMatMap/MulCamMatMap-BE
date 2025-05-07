@@ -27,4 +27,13 @@ public class Member {
     @Column
     private String role; //관리자/일반 사용자 권한설정
 
+    public static Member createAdmin(String email, String username, String password, String role) {
+        Member admin = new Member();  // 이 줄은 클래스 내부이므로 protected 생성자 사용 가능
+        admin.setEmail(email);
+        admin.setUsername(username);
+        admin.setPassword(password);
+        admin.setRole(role);
+        return admin;
+    }
+
 }
