@@ -77,9 +77,15 @@ public class DataLoader {
     private List<String> parseCategoryNames(String categoryString) {
         List<String> result = new ArrayList<>();
         if (categoryString != null && !categoryString.trim().isEmpty()) {
-            String[] names = categoryString.split(",");
+            // "등" 앞까지만 자르기
+            String cleanedCategory = categoryString.split("등")[0];
+
+            String[] names = cleanedCategory.split(",");
             for (String name : names) {
-                result.add(name.trim());
+                String trimmed = name.trim();
+                if (!trimmed.isEmpty()) {
+                    result.add(trimmed);
+                }
             }
         }
         return result;
