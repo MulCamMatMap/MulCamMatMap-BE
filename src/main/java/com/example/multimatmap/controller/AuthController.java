@@ -12,10 +12,8 @@ import lombok.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.util.Map;
@@ -60,12 +58,17 @@ public class AuthController {
         if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken)) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰을 발급
             String email = jwtTokenProvider.getUserName(refreshToken);
-            String role = "USER"; //일단 역할은 유저로
+            String role = "ROLE_USER"; //일단 역할은 유저로
             String newAccessToken = jwtTokenProvider.createToken(email, role);
             // 새로운 액세스 토큰을 반환
             return ResponseEntity.ok(newAccessToken);
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED).body("Invalid refresh token");
         }
+    }
+
+    @GetMapping("/check-role")
+    public ResponseEntity<?> checkRole(Authentication authentication) {
+        return ResponseEntity.ok(authentication.getAuthorities());
     }
 }

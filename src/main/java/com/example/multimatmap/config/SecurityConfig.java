@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**","/slack").permitAll()
+                .requestMatchers("/restaurants/admin/**").hasRole("ADMIN")
                 .requestMatchers("/restaurants/**").permitAll()
                 .requestMatchers("/comment/restaurants/**").permitAll()
                 .requestMatchers("/review/restaurants/**").permitAll()

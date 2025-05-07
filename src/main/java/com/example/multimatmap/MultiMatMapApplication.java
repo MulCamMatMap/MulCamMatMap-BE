@@ -23,7 +23,7 @@ public class MultiMatMapApplication {
     public CommandLineRunner createAdmin(MemberRepository memberRepository, PasswordEncoder encoder, AdminConfig adminConfig) {
         return args -> {
             if (!memberRepository.existsByEmail("admin@example.com")) {
-                Member admin = Member.createAdmin("admin@example.com", "admin", encoder.encode(adminConfig.getPassword()), "ADMIN");
+                Member admin = Member.createAdmin("admin@example.com", "admin", encoder.encode(adminConfig.getPassword()), "ROLE_ADMIN");
                 memberRepository.save(admin);
             }
         };
