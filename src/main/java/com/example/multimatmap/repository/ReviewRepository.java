@@ -1,5 +1,7 @@
 package com.example.multimatmap.repository;
 
+import com.example.multimatmap.entity.Member;
+import com.example.multimatmap.entity.Restaurant;
 import com.example.multimatmap.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +16,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT AVG(r.score) FROM Review r WHERE r.restaurant.id = :restaurantId")
     Double findAverageScoreByRestaurantId(@Param("restaurantId") Long restaurantId);
+
+    boolean existsByMemberAndRestaurant(Member member, Restaurant restaurant);
 }
