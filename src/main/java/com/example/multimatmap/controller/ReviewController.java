@@ -28,4 +28,10 @@ public class ReviewController {
         List<ReviewResponseDTO> reviews = reviewService.getReviews(restaurantId);
         return ResponseEntity.ok(reviews);
     }
+
+    @GetMapping("/restaurants/{restaurantId}/score")
+    public Double getScore(@PathVariable Long restaurantId) {
+        Double avgScore = reviewService.getScore(restaurantId);
+        return avgScore;
+    }
 }

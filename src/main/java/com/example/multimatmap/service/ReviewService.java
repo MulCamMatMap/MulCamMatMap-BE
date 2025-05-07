@@ -75,4 +75,9 @@ public class ReviewService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public Double getScore(Long restaurantId) {
+        Double avgScore = reviewRepository.findAverageScoreByRestaurantId(restaurantId);
+        return avgScore != null ? avgScore : 0.0;  // 리뷰가 하나도 없을 경우 0.0으로 처리
+    }
 }
