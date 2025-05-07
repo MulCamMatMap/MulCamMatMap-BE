@@ -1,6 +1,6 @@
 spring:
-  config:
-    import: optional:classpath:application-API-KEY.properties
+#  config:
+#    import: optional:classpath:application-API-KEY.properties
   springdoc:
     swagger-ui:
       path: /swagger-ui.html
@@ -8,9 +8,9 @@ spring:
 #    url: jdbc:mysql://${DB_URL}
 #    username: ${DB_USERNAME}
 #    password: ${DB_PASSWORD}
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://localhost:3306/restaurant_db?serverTimezone=Asia/Seoul&useSSL=false&allowPublicKeyRetrieval=true
+    username: minseok
+    password: 1919
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,20 +18,20 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
+#        dialect: org.hibernate.dialect.H2Dialect
 
   servlet:
     encoding:
       force-response: true
 
 naver:
-  client-id: ${NAVER_CLIENT_ID}
-  client-secret: ${NAVER_CLIENT_SECRET}
+  client-id: jy1m6e2rxq
+  client-secret: A7RwMDMpv7QsBdepFRzWtT5sMzhOPuO4HgK8dvv1
 
 slack:
-  token: ${SLACK_TOKEN}
-  channel-id: ${SLACK_CHANNEL_ID}
+  token: xoxb-8462684249778-8778354499815-WffcJFWyxvckarQu9TJpgoDg
+  channel-id: C08D6524VABapplication.yml
 
 jwt:
-  secret: ${JWT_CODE}
+  secret: zW5T!x3#D4v8*F9u$Y7sK2@1L9gJm4Qa
   expiration: 3600000 #1시간 지속으로 설정했습니다.
