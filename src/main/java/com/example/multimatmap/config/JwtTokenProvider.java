@@ -33,8 +33,9 @@ public class JwtTokenProvider {
 
     @PostConstruct
     protected void init() {
-        byte[] keyBytes = Base64.getEncoder().encode(secretKey.getBytes());
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+//        byte[] keyBytes = Base64.getEncoder().encode(secretKey.getBytes());
+//        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     // 토큰 생성
@@ -90,6 +91,7 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("토큰 유효성 검증 실패: " + e.getMessage());
             return false;
         }
     }
@@ -121,6 +123,19 @@ public class JwtTokenProvider {
             return bearer.substring(7);
         }
         //2.쿠키 체크
+//        Cookie[] cookies = request.getCookies();
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//                if ("refreshToken".equals(cookie.getName())) {
+//                    return cookie.getValue();
+//                }
+//            }
+//        }
+
+        return null;
+    }
+
+    public String refreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -129,7 +144,6 @@ public class JwtTokenProvider {
                 }
             }
         }
-
         return null;
     }
 }
