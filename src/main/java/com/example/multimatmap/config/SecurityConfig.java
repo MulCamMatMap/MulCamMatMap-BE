@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT니까 세션 안씀
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**","/slack").permitAll()
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**","/slack/**").permitAll()
                 .requestMatchers("/restaurants/admin/**").hasRole("ADMIN")
                 .requestMatchers("/restaurants/**").permitAll()
                 .requestMatchers("/comment/restaurants/**").permitAll()
