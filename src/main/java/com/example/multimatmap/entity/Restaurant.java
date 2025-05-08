@@ -37,6 +37,10 @@ public class Restaurant {
     @Builder.Default
     private List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
 
+    // 낙관적 락 적용
+//    @Version
+//    private Long version;
+
     public void updateRestaurantDetails(Restaurant restaurant) {
         this.name = restaurant.getName();
         this.address = restaurant.getAddress();

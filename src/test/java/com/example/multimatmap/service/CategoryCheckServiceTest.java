@@ -42,6 +42,8 @@ class CategoryCheckServiceTest {
     @Test
     void testIsRestaurant() {
         String name = "세종대학교 학생회관 푸드코트";
+        
+        name += " 광진구";
 
         boolean result = categoryCheckService.isRestaurant(name);
         System.out.println("✅ " + name + " => 음식점 여부: " + result);

@@ -53,7 +53,7 @@ public class CategoryCheckService {
             };
 
             String url = UriComponentsBuilder.fromHttpUrl(SEARCH_LOCAL_URL)
-                    .queryParam("query", restaurantName)
+                    .queryParam("query", restaurantName + " 광진구")
                     .queryParam("display", 5)  // 최대값: 5
                     .build()
                     .toUriString();
