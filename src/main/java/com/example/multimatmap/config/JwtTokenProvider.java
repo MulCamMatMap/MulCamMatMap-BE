@@ -56,7 +56,7 @@ public class JwtTokenProvider {
 
     public String createRefreshToken() {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds * 2); // 리프레시 토큰은 더 긴 유효 기간
+        Date validity = new Date(now.getTime() + validityInMilliseconds * 48); // 리프레시 토큰은 더 긴 유효 기간
 
         Claims claims = Jwts.claims().setSubject("refresh-token");
         return Jwts.builder()
