@@ -33,21 +33,21 @@ public class AuthController {
 
     //로그인 하고, 토큰을 받아옴
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid MemberLoginDTO loginrequest){
+    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid MemberLoginDTO loginrequest) {
         String refreshToken = jwtTokenProvider.createRefreshToken();
         String accessToken = memberService.login(loginrequest);
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(Duration.ofDays(7)) // 리프레시 토큰 유효기간 (7일)
+                .maxAge(Duration.ofDays(7))
                 .build();
 
         Map<String, String> responseBody = Map.of("accessToken", accessToken);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(responseBody.toString());
+                .body(responseBody);
     }
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {

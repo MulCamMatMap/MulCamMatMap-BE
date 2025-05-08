@@ -36,9 +36,8 @@ public class RestaurantService {
      * - 식당과 카테고리 간의 M:N 관계 설정
      */
     public void saveCategories(Restaurant restaurant, List<String> categoryNames) {
-        List<CategoryRestaurant> categoryRestaurants = new ArrayList<>();
+        restaurant.getCategoryRestaurants().clear();
 
-        // 이름으로 조회, 없으면 생성
         for (String name : categoryNames) {
             Category category = categoryRepository.findByName(name)
                     .orElseGet(() -> categoryRepository.save(new Category(name)));
@@ -47,12 +46,13 @@ public class RestaurantService {
                     .restaurant(restaurant)
                     .category(category)
                     .build();
-            categoryRestaurants.add(cr);
+
+            restaurant.getCategoryRestaurants().add(cr); // set이 아니라 add!
         }
-        restaurant.setCategoryRestaurants(categoryRestaurants);
+
+        // 3. save
         restaurantRepository.save(restaurant);
     }
-
     /**
      * 식당이 존재하지 않을 경우에만 저장
      * @param restaurant
