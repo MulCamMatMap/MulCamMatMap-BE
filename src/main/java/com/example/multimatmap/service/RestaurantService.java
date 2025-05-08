@@ -9,6 +9,7 @@ import com.example.multimatmap.repository.RestaurantRepository;
 import com.example.multimatmap.util.PolygonChecker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RestaurantService {
 
+    private final CategoryCheckService categoryCheckService;
     private final RestaurantRepository restaurantRepository;
     private final CategoryRepository categoryRepository;
 
@@ -32,13 +34,16 @@ public class RestaurantService {
     }
 
     /**
-     * 식당 위치 정보가 올바른 경우 save 함수로 넘기고 아니면 예외 발생
-     * @param restaurant
-     * @return
+     * 식당 위치 정보가 올바르지 않은 경우 예외 발생
+     * 올바른 카테고리가 아닌 경우 예외 발생
+     * @param restaurant 입력받은 식당
+     * @return 예외 발생이 아닌 경우 식당을 db 에 저장한 후 반환
      */
     public Restaurant saveChecking(Restaurant restaurant) {
         if (!PolygonChecker.isValidLocation(restaurant.getLatitude(), restaurant.getLongitude()))
             throw new IllegalArgumentException("멀캠 맛지도에는 어울리지 않는 위치입니다");
+        if (!categoryCheckService.isRestaurant(restaurant.getName()))
+            throw new IllegalArgumentException("올바른 식당 카테고리 아닙니다");
         return restaurantRepository.save(restaurant);
     }
 
@@ -158,7 +163,9 @@ public class RestaurantService {
 
         if (!PolygonChecker.isValidLocation(restaurant.getLatitude(), restaurant.getLongitude()))
             throw new IllegalArgumentException("멀캠 맛지도에는 어울리지 않는 위치입니다");
-        
+        if (!categoryCheckService.isRestaurant(restaurant.getName()))
+            throw new IllegalArgumentException("올바른 식당 카테고리 아닙니다");
+
         return update(existingRestaurant, restaurant);
     }
 }
