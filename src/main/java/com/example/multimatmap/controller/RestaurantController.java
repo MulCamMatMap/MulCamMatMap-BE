@@ -20,7 +20,7 @@ public class RestaurantController {
 
     @PostMapping
     public Restaurant addRestaurant(@RequestBody Restaurant restaurant) {
-        return restaurantService.save(restaurant);
+        return restaurantService.saveChecking(restaurant);
     }
 
     @GetMapping
@@ -64,7 +64,7 @@ public class RestaurantController {
             @PathVariable Long id,
             @RequestBody RestaurantDTO restaurantDTO // @RequestBody로 수정
     ) {
-        Restaurant updatedRestaurant = restaurantService.updateById(id, restaurantDTO.toEntity());
+        Restaurant updatedRestaurant = restaurantService.updateChecking(id, restaurantDTO.toEntity());
         return ResponseEntity.ok(new RestaurantDTO(updatedRestaurant));
     }
 }

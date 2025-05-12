@@ -41,6 +41,7 @@ public class DataLoader {
         saveUnique("미식반점 군자본점", "중식", "서울 광진구 군자로 70 1층", "https://naver.me/xX7OPRbq", null);
         saveUnique("계절밥상 세종대학교점", "한식", "서울 광진구 능동로 209 군자관 6층", "https://naver.me/xmxAGO3d", "넓은 자리, 가격 저렴");
         saveUnique("멀캠 반점", "한식,중식,일식,양식", "서울 광진구 능동로 195-16 5층", "https://naver.me/xX7OPRbq", null);
+        saveUnique("아무개 카페", "식당", "서울 마포구 동교동 164-8 1층", "https://naver.me/GALRciQ6", "치킨 먹고 싶다");
     }
 
     private void saveUnique(String name, String category, String address, String link, String note) {

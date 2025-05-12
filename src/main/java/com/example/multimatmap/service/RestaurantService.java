@@ -6,8 +6,10 @@ import com.example.multimatmap.entity.CategoryRestaurant;
 import com.example.multimatmap.entity.Restaurant;
 import com.example.multimatmap.repository.CategoryRepository;
 import com.example.multimatmap.repository.RestaurantRepository;
+import com.example.multimatmap.util.PolygonChecker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RestaurantService {
 
+    private final CategoryCheckService categoryCheckService;
     private final RestaurantRepository restaurantRepository;
     private final CategoryRepository categoryRepository;
 
@@ -27,6 +30,20 @@ public class RestaurantService {
      * @return
      */
     public Restaurant save(Restaurant restaurant) {
+        return restaurantRepository.save(restaurant);
+    }
+
+    /**
+     * 식당 위치 정보가 올바르지 않은 경우 예외 발생
+     * 올바른 카테고리가 아닌 경우 예외 발생
+     * @param restaurant 입력받은 식당
+     * @return 예외 발생이 아닌 경우 식당을 db 에 저장한 후 반환
+     */
+    public Restaurant saveChecking(Restaurant restaurant) {
+        if (!PolygonChecker.isValidLocation(restaurant.getLatitude(), restaurant.getLongitude()))
+            throw new IllegalArgumentException("멀캠 맛지도에는 어울리지 않는 위치입니다");
+        if (!categoryCheckService.isRestaurant(restaurant.getName()))
+            throw new IllegalArgumentException("올바른 식당 카테고리 아닙니다");
         return restaurantRepository.save(restaurant);
     }
 
@@ -122,17 +139,33 @@ public class RestaurantService {
     }
 
     /**
-     * 식당 id를 이용하여 식당 정보 update, 존재하지 않을 경우 예외 발생
-     * @param id
-     * @param restaurant
+     * 기존에 있는 식당 정보를 새롭게 입력받은 식당 정보로 업데이트
+     * @param existingRestaurant 기존 식당 정보
+     * @param restaurant 새롭게 입력된 식당 정보
      * @return
      */
     @Transactional
-    public Restaurant updateById(Long id, Restaurant restaurant) {
+    public Restaurant update(Restaurant existingRestaurant, Restaurant restaurant) {
+        existingRestaurant.updateRestaurantDetails(restaurant);
+        return restaurantRepository.save(existingRestaurant);
+    }
+
+    /**
+     * id와 식당 정보를 입력받아
+     * 존재하지 않은 id이거나 새롭게 입력받은 식당 정보가 올바르지 않으면 예외 발생
+     * @param id 기존 식당 id값
+     * @param restaurant 새롭게 입력받은 식당 정보
+     * @return
+     */
+    public Restaurant updateChecking(Long id, Restaurant restaurant) {
         Restaurant existingRestaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
-        existingRestaurant.updateRestaurantDetails(restaurant);
-        return restaurantRepository.save(existingRestaurant);
+        if (!PolygonChecker.isValidLocation(restaurant.getLatitude(), restaurant.getLongitude()))
+            throw new IllegalArgumentException("멀캠 맛지도에는 어울리지 않는 위치입니다");
+        if (!categoryCheckService.isRestaurant(restaurant.getName()))
+            throw new IllegalArgumentException("올바른 식당 카테고리 아닙니다");
+
+        return update(existingRestaurant, restaurant);
     }
 }
